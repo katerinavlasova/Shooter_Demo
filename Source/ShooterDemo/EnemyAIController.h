@@ -21,5 +21,10 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+private:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "AI Properties", meta = (AllowPrivateAccess = "true"))
+	class UBehaviorTree *BehaviorTree;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "AI Properties", meta = (AllowPrivateAccess = "true"))
+	class UBlackboardComponent *BlackboardComponent;
 
 };

@@ -3,6 +3,9 @@
 
 #include "EnemyAIController.h"
 #include "Kismet/GameplayStatics.h"
+#include "BehaviorTree/BehaviorTree.h"
+#include "BehaviorTree/BlackboardComponent.h"
+
 
 
 AEnemyAIController::AEnemyAIController()
@@ -14,15 +17,33 @@ void AEnemyAIController::BeginPlay()
 {
     Super::BeginPlay();
     APawn *PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
-    SetFocus(PlayerPawn);
+    if (BehaviorTree != nullptr)
+    {
+        RunBehaviorTree(BehaviorTree);
+        GetBlackboardComponent()->SetValueAsVector(TEXT("PlayerLocation"), PlayerPawn->GetActorLocation());
+    }
+    //SetFocus(PlayerPawn);
 }
 
 void AEnemyAIController::Tick(float DeltaSeconds)
 {
     Super::Tick(DeltaSeconds);
-    APawn *PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
-    if (PlayerPawn)
-    {   
-        MoveToActor(PlayerPawn, 20);
+    if (BehaviorTree)
+    {
+        APawn *PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
+        if (LineOfSightTo(PlayerPawn))
+        {
+            GetBlackboardComponent()->SetValueAsVector(TEXT("PlayerLocation"), PlayerPawn->GetActorLocation());
+            GetBlackboardComponent()->SetValueAsVector(TEXT("LastKnownPlayerLocation"), PlayerPawn->GetActorLocation());
+        }
+
     }
+    // APawn *PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
+    // if (PlayerPawn)
+    // {   
+    //     if (this->LineOfSightTo(PlayerPawn))
+    //     {
+    //         MoveToActor(PlayerPawn, 20);
+    //     }
+    // }
 }
