@@ -3,3 +3,7 @@
 
 #include "BTTask_Blackboard.h"
 
+UBTTask_Blackboard::UBTTask_Blackboard()
+{
+    NodeName = TEXT("Clear Bkackboard Value");
+}

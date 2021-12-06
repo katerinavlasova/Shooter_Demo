@@ -21,6 +21,7 @@ void AEnemyAIController::BeginPlay()
     {
         RunBehaviorTree(BehaviorTree);
         GetBlackboardComponent()->SetValueAsVector(TEXT("PlayerLocation"), PlayerPawn->GetActorLocation());
+        GetBlackboardComponent()->SetValueAsVector(TEXT("PatrollnitLocation"), this->GetPawn()->GetActorLocation());
     }
     //SetFocus(PlayerPawn);
 }
@@ -35,6 +36,10 @@ void AEnemyAIController::Tick(float DeltaSeconds)
         {
             GetBlackboardComponent()->SetValueAsVector(TEXT("PlayerLocation"), PlayerPawn->GetActorLocation());
             GetBlackboardComponent()->SetValueAsVector(TEXT("LastKnownPlayerLocation"), PlayerPawn->GetActorLocation());
+        }
+        else
+        {
+            GetBlackboardComponent()->ClearValue(TEXT("PlayerLocation"));
         }
 
     }

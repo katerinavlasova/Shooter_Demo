@@ -13,5 +13,8 @@ UCLASS()
 class SHOOTERDEMO_API UBTTask_Blackboard : public UBTTask_BlackboardBase
 {
 	GENERATED_BODY()
+
+public:
+	UBTTask_Blackboard();
 	
 };

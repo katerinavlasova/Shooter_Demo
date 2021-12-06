@@ -13,5 +13,5 @@ UCLASS()
 class SHOOTERDEMO_API UBTService_Blackboard : public UBTService_BlackboardBase
 {
 	GENERATED_BODY()
-	
+
 };
