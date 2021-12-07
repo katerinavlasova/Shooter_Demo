@@ -3,19 +3,16 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "BehaviorTree/Tasks/BTTask_BlackboardBase.h"
-#include "BTTask_Blackboard.generated.h"
+#include "BehaviorTree/BTTaskNode.h"
+#include "BTTaskNode_Shoot.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class SHOOTERDEMO_API UBTTask_Blackboard : public UBTTask_BlackboardBase
+class SHOOTERDEMO_API UBTTaskNode_Shoot : public UBTTaskNode
 {
 	GENERATED_BODY()
-
-public:
-	UBTTask_Blackboard();
 
 protected:
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent & OwnerComp, uint8 * NodeMemory) override;

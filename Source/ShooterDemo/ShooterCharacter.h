@@ -52,7 +52,6 @@ private:
 
 	//Line trace for guns
 	void LineTracing();
-	void Shoot();
 	UPROPERTY(VisibleAnywhere)
 	class AGun *TracedGunLastFrame;
 
@@ -75,5 +74,6 @@ public:
 	FHitResult LineTrace();
 	UFUNCTION(BlueprintPure)
 	bool IsDead() const;
+	void Shoot();
 
 };

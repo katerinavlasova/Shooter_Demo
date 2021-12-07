@@ -4,19 +4,18 @@
 
 #include "CoreMinimal.h"
 #include "BehaviorTree/Services/BTService_BlackboardBase.h"
-#include "BTService_Blackboard.generated.h"
+#include "BTService_PlayerLocation.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class SHOOTERDEMO_API UBTService_Blackboard : public UBTService_BlackboardBase
+class SHOOTERDEMO_API UBTService_PlayerLocation : public UBTService_BlackboardBase
 {
 	GENERATED_BODY()
 
 private:
-	UBTService_Blackboard();
-
+	UBTService_PlayerLocation();
 protected:
 	void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
 };

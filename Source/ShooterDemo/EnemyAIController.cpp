@@ -20,8 +20,9 @@ void AEnemyAIController::BeginPlay()
     if (BehaviorTree != nullptr)
     {
         RunBehaviorTree(BehaviorTree);
-        GetBlackboardComponent()->SetValueAsVector(TEXT("PlayerLocation"), PlayerPawn->GetActorLocation());
         GetBlackboardComponent()->SetValueAsVector(TEXT("PatrollnitLocation"), this->GetPawn()->GetActorLocation());
+        //GetBlackboardComponent()->SetValueAsVector(TEXT("PlayerLocation"), PlayerPawn->GetActorLocation());
+        //GetBlackboardComponent()->SetValueAsVector(TEXT("PatrollnitLocation"), this->GetPawn()->GetActorLocation());
     }
     //SetFocus(PlayerPawn);
 }
@@ -29,20 +30,20 @@ void AEnemyAIController::BeginPlay()
 void AEnemyAIController::Tick(float DeltaSeconds)
 {
     Super::Tick(DeltaSeconds);
-    if (BehaviorTree)
-    {
-        APawn *PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
-        if (LineOfSightTo(PlayerPawn))
-        {
-            GetBlackboardComponent()->SetValueAsVector(TEXT("PlayerLocation"), PlayerPawn->GetActorLocation());
-            GetBlackboardComponent()->SetValueAsVector(TEXT("LastKnownPlayerLocation"), PlayerPawn->GetActorLocation());
-        }
-        else
-        {
-            GetBlackboardComponent()->ClearValue(TEXT("PlayerLocation"));
-        }
+    // if (BehaviorTree)
+    // {
+    //     APawn *PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
+    //     // if (LineOfSightTo(PlayerPawn))
+    //     // {
+    //     //     GetBlackboardComponent()->SetValueAsVector(TEXT("PlayerLocation"), PlayerPawn->GetActorLocation());
+    //     //     GetBlackboardComponent()->SetValueAsVector(TEXT("LastKnownPlayerLocation"), PlayerPawn->GetActorLocation());
+    //     // }
+    //     // else
+    //     // {
+    //     //     GetBlackboardComponent()->ClearValue(TEXT("PlayerLocation"));
+    //     // }
 
-    }
+    // }
     // APawn *PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
     // if (PlayerPawn)
     // {   
