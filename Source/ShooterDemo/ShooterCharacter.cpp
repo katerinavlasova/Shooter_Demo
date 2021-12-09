@@ -11,8 +11,11 @@
 #include "Components/CapsuleComponent.h"
 #include "Gun_Default.h"
 #include "Kismet/GameplayStatics.h"
-
 #include "Components/WidgetComponent.h"
+#include "TimerManager.h"
+
+#include "ShooterDemoGameModeBase.h"
+
 
 // Sets default values
 AShooterCharacter::AShooterCharacter()
@@ -174,8 +177,14 @@ float AShooterCharacter::TakeDamage(float DamageAmount, struct FDamageEvent cons
 	UE_LOG(LogTemp, Error, TEXT("Health left %f"), Health);
 	if (IsDead())
 	{
+	  	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		//get GameMode
+		AShooterDemoGameModeBase *GameMode = GetWorld()->GetAuthGameMode<AShooterDemoGameModeBase>();
+		if (GameMode)
+		{
+			GameMode->PawnKilled(this);
+		}
 		DetachFromControllerPendingDestroy();
-		GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	}
 	return DamageToApply;
 }

@@ -13,5 +13,8 @@ UCLASS()
 class SHOOTERDEMO_API AShooterDemoGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
-	
+
+public:
+	UFUNCTION()
+	virtual void PawnKilled(APawn *KilledPawn);
 };
