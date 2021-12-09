@@ -248,6 +248,12 @@ void AShooterCharacter::IncrementItemCount(int8 Amount)
 	}
 }
 
+float AShooterCharacter::GetHealthPercent() const
+{
+	return Health / MaxHealth;
+}
+
+
 void AShooterCharacter::Shoot()
 {
 	EquippedGun->PullTrigger(this);
