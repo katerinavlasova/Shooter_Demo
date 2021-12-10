@@ -65,7 +65,9 @@ private:
 	UParticleSystem *ParticlesHit;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Item Properties", meta = (AllowPrivateAccess = "true"))
 	EGunState GunState;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item Properties", meta = (AllowPrivateAccess = "true"))
 	float MaxRange = 1000.f;
+	float GunRange;
 	float Damage = 100.f;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item Properties", meta = (AllowPrivateAccess = "true"))
 	USoundBase *SoundHitActor;

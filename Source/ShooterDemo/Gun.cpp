@@ -39,6 +39,7 @@ AGun::AGun()
 	//InRangeComponent->SetupAttachment(GetRootComponent());
 	InRangeComponent->AttachToComponent(GunMesh, FAttachmentTransformRules::KeepRelativeTransform);
 	GunName = FString("Shotgun");
+	GunRange = MaxRange;
 	BulletsCount = 100;
 	GunState = EGunState::EIS_PickUp;
 	SetGunProperties(GunState);
