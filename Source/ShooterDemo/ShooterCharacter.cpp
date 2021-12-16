@@ -79,7 +79,7 @@ void AShooterCharacter::LineTracing()
 			//ECollisionChannel::ECC_GameTraceChannel1,
 		//	QueryParams
 		);
-		DrawDebugPoint(GetWorld(), EndLocation, 50, FColor::Green);
+		// DrawDebugPoint(GetWorld(), EndLocation, 50, FColor::Green);
 		if (HitActor.GetActor())
 		{
 			TraceHitGun = Cast<AGun>(HitActor.GetActor());
@@ -106,7 +106,7 @@ void AShooterCharacter::LineTracing()
 		}
 		if (bsuccess)
 		{
-			DrawDebugCamera(GetWorld(), EndLocation, Rotation, 100, 2, FColor::Red, true);
+			// DrawDebugCamera(GetWorld(), EndLocation, Rotation, 100, 2, FColor::Red, true);
 
 			UE_LOG(LogTemp, Warning, TEXT("hitted %s"), *HitActor.GetActor()->GetName());
 		}
