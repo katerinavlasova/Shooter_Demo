@@ -15,7 +15,6 @@ EBTNodeResult::Type UBTTaskNode_Shoot::ExecuteTask(UBehaviorTreeComponent & Owne
     AShooterCharacter *Character = Cast<AShooterCharacter>(ActorPawn);
     if (Character)
     {
-        UE_LOG(LogTemp, Warning, TEXT("SHoootototo"));
         Character->Shoot();
     }
     return EBTNodeResult::Succeeded;

@@ -79,13 +79,9 @@ void AShooterCharacter::LineTracing()
 			TraceHitGun = Cast<AGun>(HitActor.GetActor());
 			if (TraceHitGun && TraceHitGun->GetPickUpWidget())
 			{
-				UE_LOG(LogTemp, Error, TEXT("Hiiteed!111111111111111111111111111111"));
 				TraceHitGun->GetPickUpWidget()->SetVisibility(true);
 			}
-			else
-			{
-				UE_LOG(LogTemp, Error, TEXT("NO WIDGET"));
-			}
+
 
 			if (TracedGunLastFrame)
 			{
@@ -100,7 +96,6 @@ void AShooterCharacter::LineTracing()
 		}
 		if (bsuccess)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("hitted %s"), *HitActor.GetActor()->GetName());
 		}
 
 	}
@@ -165,7 +160,6 @@ float AShooterCharacter::TakeDamage(float DamageAmount, struct FDamageEvent cons
 	float DamageToApply = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 	DamageToApply = FMath::Min(Health, DamageToApply);
 	Health -= DamageToApply;
-	UE_LOG(LogTemp, Error, TEXT("Health left %f"), Health);
 	if (IsDead())
 	{
 	  	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);

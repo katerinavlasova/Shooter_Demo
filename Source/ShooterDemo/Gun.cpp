@@ -82,7 +82,6 @@ void AGun::SetGunProperties(EGunState State)
 {
 	switch (State)
 	{
-		UE_LOG(LogTemp, Error, TEXT("void AGun::SetGunProperties(EGunState State)"));
 
 		case EGunState::EIS_PickUp:
 			GunMesh->SetSimulatePhysics(false);
@@ -139,7 +138,6 @@ void AGun::SetGunState(EGunState NewGunState)
 
 void AGun::PullTrigger(AShooterCharacter *Character)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Piy piy"));
 	UGameplayStatics::SpawnEmitterAttached(ParticlesShoot, GunMesh, TEXT("MuzzleFlashSocket"));
 	FVector Location;
 	FRotator Rotation;
@@ -154,11 +152,9 @@ void AGun::PullTrigger(AShooterCharacter *Character)
 	if (bSuccess)
 	{
 		FVector ShootDirection = -Rotation.Vector();
-		UE_LOG(LogTemp, Warning, TEXT("spawning??? %s"), *HitResult.GetActor()->GetName());
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ParticlesHit, HitResult.Location, ShootDirection.Rotation());//HitResult.GetActor()->GetActorRotation());
 		if (HitResult.GetActor() != nullptr)
 		{
-			UE_LOG(LogTemp, Error, TEXT("send damage"));
 			FPointDamageEvent DamageEventShoot(Damage, HitResult, ShootDirection, nullptr);
 			HitResult.GetActor()->TakeDamage(Damage, DamageEventShoot, Character->GetController(), this);
 		}

@@ -6,7 +6,6 @@
 void AKillThemAllGameModeBase::PawnKilled(APawn *KilledPawn)
 {
     Super::PawnKilled(KilledPawn);
-    UE_LOG(LogTemp, Error, TEXT("smb is dead.."));
     APlayerController *PlayerController = Cast<APlayerController>(KilledPawn->GetController());
     if (PlayerController)
     {
