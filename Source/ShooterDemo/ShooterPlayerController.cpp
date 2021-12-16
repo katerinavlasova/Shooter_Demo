@@ -16,10 +16,7 @@ void AShooterPlayerController::GameHasEnded(class AActor * EndGameFocus, bool bI
         if (PlayerController)
         {
             FTimerHandle TimerHandle;
-            //FTimerDelegate TimerDelegate = FTimerDelegate::CreateUObject(this, &AShooterPlayerController::SetPause, true);
             GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &AShooterPlayerController::SetPausing, 1, false);
-            //GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
-            //SetPause(true);
         }
         Widget->AddToViewport();
     }
@@ -29,11 +26,3 @@ void AShooterPlayerController::SetPausing()
 {
     SetPause(true);
 }
-
-
-           // FTimerHandle TimerHandle;
-            // FTimerDelegate TimerDelegate = FTimerDelegate::CreateUObject(this, &APlayerController::SetPause, true);
-            // GetWorldTimerManager().SetTimer(TimerHandle, TimerDelegate, 2, false);
-            // GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
-            //PlayerController->
-            //SetPause(true);

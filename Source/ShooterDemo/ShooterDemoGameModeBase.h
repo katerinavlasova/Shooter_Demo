@@ -16,5 +16,6 @@ class SHOOTERDEMO_API AShooterDemoGameModeBase : public AGameModeBase
 
 public:
 	UFUNCTION()
+	//basic implementation to override in child class
 	virtual void PawnKilled(APawn *KilledPawn);
 };

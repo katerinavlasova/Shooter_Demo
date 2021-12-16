@@ -66,9 +66,6 @@ void AShooterCharacter::LineTracing()
 		FVector Location;
 		FRotator Rotation;
 		FHitResult HitActor;
-		//FCollisionQueryParams QueryParams;
-		//QueryParams.AddIgnoredActor(this);
-		//GetController()->GetActorEyesViewPoint(Location, Rotation);
 		GetController()->GetPlayerViewPoint(Location, Rotation);
 		FVector EndLocation = Location + Rotation.Vector() * Range;
 		bool bsuccess = GetWorld()->LineTraceSingleByChannel(
@@ -76,10 +73,7 @@ void AShooterCharacter::LineTracing()
 			Location,
 			EndLocation,
 			ECollisionChannel::ECC_Visibility
-			//ECollisionChannel::ECC_GameTraceChannel1,
-		//	QueryParams
 		);
-		// DrawDebugPoint(GetWorld(), EndLocation, 50, FColor::Green);
 		if (HitActor.GetActor())
 		{
 			TraceHitGun = Cast<AGun>(HitActor.GetActor());
@@ -106,8 +100,6 @@ void AShooterCharacter::LineTracing()
 		}
 		if (bsuccess)
 		{
-			// DrawDebugCamera(GetWorld(), EndLocation, Rotation, 100, 2, FColor::Red, true);
-
 			UE_LOG(LogTemp, Warning, TEXT("hitted %s"), *HitActor.GetActor()->GetName());
 		}
 
@@ -162,7 +154,6 @@ AGun_Default* AShooterCharacter::SpawnDefaultGun()
 	if (DefaultGunClass)
 	{
 		AGun_Default *SpawnGun =  GetWorld()->SpawnActor<AGun_Default>(DefaultGunClass);
-		//SpawnGun->SetOwner(this);
 		return SpawnGun;
 	}
 	return nullptr;
@@ -198,8 +189,7 @@ void AShooterCharacter::EquipGun(AGun_Default *GunToEquip)
 {
 	if (GunToEquip)
 	{
-		//GunToEquip->GetAreaSphere()->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
-		//GunToEquip->GetBoxCollision()->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
+
 
 		const USkeletalMeshSocket *RightHandSocket = GetMesh()->GetSocketByName(FName("RightHandSocket"));
 		if (RightHandSocket)
@@ -219,7 +209,6 @@ void AShooterCharacter::DropGun()
 	{
 		FDetachmentTransformRules DetachmentTransformRules(EDetachmentRule::KeepWorld, true);
 		EquippedGun->DetachFromActor(DetachmentTransformRules);
-		//EquippedGun->GetGunMesh()->DetachFromComponent(DetachmentTransformRules);
 
 		EquippedGun->SetGunState(EGunState::EIS_Falling);
 		EquippedGun->ThrowGun();

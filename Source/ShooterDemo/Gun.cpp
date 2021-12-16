@@ -12,12 +12,9 @@ AGun::AGun()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	//Root = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
-	//SetRootComponent(Root);
 	
 	GunMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("GunMesh"));
 	SetRootComponent(GunMesh);
-	//GunMesh->SetupAttachment(GetRootComponent());
 
 	BoxCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxCollision"));
 	BoxCollision->AttachToComponent(GunMesh, FAttachmentTransformRules::KeepRelativeTransform);
@@ -25,8 +22,6 @@ AGun::AGun()
 	WidgetDescription = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetComponent"));
 	InRangeComponent = CreateDefaultSubobject<USphereComponent>(TEXT("InRangeToSee"));
 
-	//BoxCollision->SetupAttachment(GetRootComponent());
-	//BoxCollision->SetupAttachment(GunMesh);
 	BoxCollision->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
 	 BoxCollision->SetCollisionResponseToChannel(
 	 	ECollisionChannel::ECC_Visibility,
@@ -34,9 +29,7 @@ AGun::AGun()
 	 );
 
 
-	//WidgetDescription->SetupAttachment(GetRootComponent());
 	WidgetDescription->AttachToComponent(GunMesh, FAttachmentTransformRules::KeepRelativeTransform);
-	//InRangeComponent->SetupAttachment(GetRootComponent());
 	InRangeComponent->AttachToComponent(GunMesh, FAttachmentTransformRules::KeepRelativeTransform);
 	GunName = FString("Shotgun");
 	GunRange = MaxRange;
@@ -92,7 +85,6 @@ void AGun::SetGunProperties(EGunState State)
 		UE_LOG(LogTemp, Error, TEXT("void AGun::SetGunProperties(EGunState State)"));
 
 		case EGunState::EIS_PickUp:
-			//this->SetOwner(nullptr);
 			GunMesh->SetSimulatePhysics(false);
 			GunMesh->SetEnableGravity(false);
 			GunMesh->SetVisibility(true);
@@ -118,7 +110,6 @@ void AGun::SetGunProperties(EGunState State)
 			InRangeComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 			//set box collision properties
 			BoxCollision->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
-			//BoxCollision->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Block);
 			BoxCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 			break;
 		case EGunState::EIS_Falling:
@@ -165,7 +156,6 @@ void AGun::PullTrigger(AShooterCharacter *Character)
 		FVector ShootDirection = -Rotation.Vector();
 		UE_LOG(LogTemp, Warning, TEXT("spawning??? %s"), *HitResult.GetActor()->GetName());
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ParticlesHit, HitResult.Location, ShootDirection.Rotation());//HitResult.GetActor()->GetActorRotation());
-		//UGameplayStatics::SpawnSoundAtLocation(GetWorld(), SoundHitActor, Location, Rotation);
 		if (HitResult.GetActor() != nullptr)
 		{
 			UE_LOG(LogTemp, Error, TEXT("send damage"));
