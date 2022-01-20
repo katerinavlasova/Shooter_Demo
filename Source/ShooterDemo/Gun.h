@@ -11,13 +11,12 @@
 UENUM(BlueprintType)
 enum class EGunState : uint8 
 {
+	//Gun isn't equipped and lying on the ground
 	EIS_PickUp UMETA(DisplayName = "PickUp"),
-	EIS_EquipInterping UMETA(DisplayName = "EquipInterping"),
-	EIS_PickedUp UMETA(DisplayName = "PickedUp"),
+	//Gun is equipped by a character
 	EIS_Equipped UMETA(DisplayName = "Equipped"),
+	//Gun is falling until hits the ground
 	EIS_Falling UMETA(DisplayName = "Falling"),
-
-	EIS_MAX UMETA(DisplayName = "DefaultMAX")
 };
 
 
@@ -30,6 +29,7 @@ class SHOOTERDEMO_API AGun : public AActor
 public:	
 	// Sets default values for this actor's properties
 	AGun();
+	//Spawn effects if characters shoots and provide damage if something is hit
 	void PullTrigger(class AShooterCharacter *Character);
 
 protected:
@@ -42,38 +42,44 @@ public:
 
 
 private:
-
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item Properties", meta = (AllowPrivateAccess = "true"))
 	USkeletalMeshComponent *GunMesh;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item Properties", meta = (AllowPrivateAccess = "true"))
-	class UBoxComponent *BoxCollision;
+	//Widget with gun's properties
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item Properties", meta = (AllowPrivateAccess = "true"))
 	class UWidgetComponent *WidgetDescription;
+	//Component from which player can interact with a gun
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item Properties", meta = (AllowPrivateAccess = "true"))
-	class USphereComponent *InRangeComponent;
+	class USphereComponent *AreaSphere;
+	//Component at which player should look to see gun's properties
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item Properties", meta = (AllowPrivateAccess = "true"))
+	class UBoxComponent *BoxCollision;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item Properties", meta = (AllowPrivateAccess = "true"))
 	FString GunName;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item Properties", meta = (AllowPrivateAccess = "true"))
 	int BulletsCount;
-
+	//Particles to spawn if character shoots with a gun
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item Properties", meta = (AllowPrivateAccess = "true"))
 	UParticleSystem *ParticlesShoot;
+	//Particles to spawn if character hits something with a gun
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item Properties", meta = (AllowPrivateAccess = "true"))
 	UParticleSystem *ParticlesHit;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Item Properties", meta = (AllowPrivateAccess = "true"))
 	EGunState GunState;
+	//Max and default attack range for a gun
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item Properties", meta = (AllowPrivateAccess = "true"))
-	float MaxRange = 1000.f;
+	float MaxRange;
+	//Current attack range for a gun
 	float GunRange;
-	float Damage = 100.f;
+	float GunDamage;
+	//Sound to play if character hits something by gun shooting
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item Properties", meta = (AllowPrivateAccess = "true"))
 	USoundBase *SoundHitActor;
-	//set properties depending on state
+	//Set properties depending on a state
 	void SetGunProperties(EGunState State);
 
 public:
-
 	UFUNCTION()
 	void OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, 
         			AActor* OtherActor, 
@@ -87,12 +93,11 @@ public:
 					AActor* OtherActor, 
                     UPrimitiveComponent* OtherComp, 
 					int32 OtherBodyIndex);
-	FORCEINLINE UWidgetComponent* GetPickUpWidget() const { return WidgetDescription; };
-	FORCEINLINE USphereComponent* GetAreaSphere() const { return InRangeComponent; }
-	FORCEINLINE UBoxComponent* GetBoxCollision() const { return BoxCollision; } 
-	FORCEINLINE EGunState GetGunState() const { return GunState; }
 	void SetGunState(EGunState NewGunState);
-	FORCEINLINE USkeletalMeshComponent *GetGunMesh() const { return GunMesh; }
-
+	UWidgetComponent* GetPickUpWidget() const { return WidgetDescription; };
+	USphereComponent* GetAreaSphere() const { return AreaSphere; }
+	UBoxComponent* GetBoxCollision() const { return BoxCollision; } 
+	EGunState GetGunState() const { return GunState; }
+	USkeletalMeshComponent *GetGunMesh() const { return GunMesh; }
 };
 

@@ -20,7 +20,10 @@ AGun::AGun()
 	BoxCollision->AttachToComponent(GunMesh, FAttachmentTransformRules::KeepRelativeTransform);
 
 	WidgetDescription = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetComponent"));
-	InRangeComponent = CreateDefaultSubobject<USphereComponent>(TEXT("InRangeToSee"));
+	WidgetDescription->AttachToComponent(GunMesh, FAttachmentTransformRules::KeepRelativeTransform);
+
+	AreaSphere = CreateDefaultSubobject<USphereComponent>(TEXT("InRangeToSee"));
+	AreaSphere->AttachToComponent(GunMesh, FAttachmentTransformRules::KeepRelativeTransform);
 
 	BoxCollision->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
 	 BoxCollision->SetCollisionResponseToChannel(
@@ -28,11 +31,11 @@ AGun::AGun()
 	 	ECollisionResponse::ECR_Block
 	 );
 
-
-	WidgetDescription->AttachToComponent(GunMesh, FAttachmentTransformRules::KeepRelativeTransform);
-	InRangeComponent->AttachToComponent(GunMesh, FAttachmentTransformRules::KeepRelativeTransform);
+	//Default gun name
 	GunName = FString("Shotgun");
 	GunRange = MaxRange;
+	GunDamage = 100.f;
+	MaxRange = 1000.f;
 	BulletsCount = 100;
 	GunState = EGunState::EIS_PickUp;
 	SetGunProperties(GunState);
@@ -43,8 +46,8 @@ void AGun::BeginPlay()
 {
 	Super::BeginPlay();
 	WidgetDescription->SetVisibility(false);
-	InRangeComponent->OnComponentBeginOverlap.AddDynamic(this, &AGun::OnSphereOverlap);
-	InRangeComponent->OnComponentEndOverlap.AddDynamic(this, &AGun::OnSphereEndOverlap);
+	AreaSphere->OnComponentBeginOverlap.AddDynamic(this, &AGun::OnSphereOverlap);
+	AreaSphere->OnComponentEndOverlap.AddDynamic(this, &AGun::OnSphereEndOverlap);
 }
 
 // Called every frame
@@ -77,50 +80,63 @@ void AGun::OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* 
 }
 
 
-
 void AGun::SetGunProperties(EGunState State)
 {
 	switch (State)
 	{
 
 		case EGunState::EIS_PickUp:
+
+			//Set gun mesh properties
 			GunMesh->SetSimulatePhysics(false);
 			GunMesh->SetEnableGravity(false);
 			GunMesh->SetVisibility(true);
 			GunMesh->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
 			GunMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-			//set area sphere properties
-			InRangeComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
-			InRangeComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-			//set box collision properties
+
+			//Set area sphere properties
+			AreaSphere->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
+			AreaSphere->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+
+			//Set box collision properties
 			BoxCollision->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
 			BoxCollision->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Block);
 			BoxCollision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 			break;
+		
 		case EGunState::EIS_Equipped:
+
+			//Set gun mesh properties
 			GetPickUpWidget()->SetVisibility(false);
 			GunMesh->SetSimulatePhysics(false);
 			GunMesh->SetEnableGravity(false);
 			GunMesh->SetVisibility(true);
 			GunMesh->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
 			GunMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-			//set area sphere properties
-			InRangeComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
-			InRangeComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-			//set box collision properties
+
+			//Set area sphere properties
+			AreaSphere->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
+			AreaSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+			//Set box collision properties
 			BoxCollision->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
 			BoxCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 			break;
+
 		case EGunState::EIS_Falling:
+
+			//Set gun mesh properties
 			GunMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 			GunMesh->SetSimulatePhysics(true);
 			GunMesh->SetEnableGravity(true);
 			GunMesh->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
 			GunMesh->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldStatic, ECollisionResponse::ECR_Block);
-			//set area sphere properties
-			InRangeComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
-			InRangeComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-			//set box collision properties
+
+			//Set area sphere properties
+			AreaSphere->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
+			AreaSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+			//Set box collision properties
 			BoxCollision->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
 			BoxCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 			break;
@@ -149,19 +165,17 @@ void AGun::PullTrigger(AShooterCharacter *Character)
 	QueryParams.AddIgnoredActor(Character);
 	bool bSuccess = GetWorld()->LineTraceSingleByChannel(HitResult, Location, EndLocation, ECollisionChannel::ECC_GameTraceChannel1, QueryParams);
 	UGameplayStatics::SpawnSoundAtLocation(GetWorld(), SoundHitActor, Location, Rotation);
+
+	//If gun fire hits something, spawn particles and make that object take damage
 	if (bSuccess)
 	{
 		FVector ShootDirection = -Rotation.Vector();
-		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ParticlesHit, HitResult.Location, ShootDirection.Rotation());//HitResult.GetActor()->GetActorRotation());
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ParticlesHit, HitResult.Location, ShootDirection.Rotation());
 		if (HitResult.GetActor() != nullptr)
 		{
-			FPointDamageEvent DamageEventShoot(Damage, HitResult, ShootDirection, nullptr);
-			HitResult.GetActor()->TakeDamage(Damage, DamageEventShoot, Character->GetController(), this);
+			FPointDamageEvent DamageEventShoot(GunDamage, HitResult, ShootDirection, nullptr);
+			HitResult.GetActor()->TakeDamage(GunDamage, DamageEventShoot, Character->GetController(), this);
 		}
 	}
 	bSuccess = false;
-//	APawn *Owner = Cast<APawn>(GetOwner());
-
-//	Owner->viewpo
-//	UGameplayStatics::SpawnDecalAtLocation(GetWorld(), ParticlesHit, )
 }
