@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "BehaviorTree/Services/BTService_BlackboardBase.h"
-#include "BTService_Blackboard.generated.h"
+#include "BTService_LastPlayerLocation.generated.h"
 
 /**
  * 
