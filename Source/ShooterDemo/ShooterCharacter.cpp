@@ -30,7 +30,9 @@ void AShooterCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	Health = MaxHealth;
+	//Hide bone with a gun in a character's asset
 	GetMesh()->HideBoneByName(TEXT("weapon_r"), EPhysBodyOp::PBO_None);
+
 	bShouldTraceForItems = false;
 	//Spawn and Equip default weapon
 	EquipGun(SpawnDefaultGun());	
@@ -43,24 +45,9 @@ void AShooterCharacter::Tick(float DeltaTime)
 	LineTracing();
 }
 
-
-FHitResult AShooterCharacter::LineTrace()
-{
-	FVector Location;
-	FRotator Rotation;
-	FHitResult HitActor;
-	GetController()->GetPlayerViewPoint(Location, Rotation);
-	FVector EndLocation = Location + Rotation.Vector() * Range;
-	FCollisionQueryParams QueryParams;
-	QueryParams.AddIgnoredActor(this);
-
-	GetWorld()->LineTraceSingleByChannel(HitActor, Location, EndLocation, ECollisionChannel::ECC_GameTraceChannel1, QueryParams);
-	return HitActor;
-}
-
-
 void AShooterCharacter::LineTracing()
 {
+	//Check if gun is within player's range
 	if (bShouldTraceForItems)
 	{
 		FVector Location;
@@ -68,43 +55,46 @@ void AShooterCharacter::LineTracing()
 		FHitResult HitActor;
 		GetController()->GetPlayerViewPoint(Location, Rotation);
 		FVector EndLocation = Location + Rotation.Vector() * Range;
+
 		bool bsuccess = GetWorld()->LineTraceSingleByChannel(
 			HitActor,
 			Location,
 			EndLocation,
 			ECollisionChannel::ECC_Visibility
 		);
+		//If player hits an object
 		if (HitActor.GetActor())
 		{
 			TraceHitGun = Cast<AGun>(HitActor.GetActor());
+			//If player traced a gun, show it's widget with description
 			if (TraceHitGun && TraceHitGun->GetPickUpWidget())
 			{
 				TraceHitGun->GetPickUpWidget()->SetVisibility(true);
 			}
 
-
+			//if player traced a gun in last frame
 			if (TracedGunLastFrame)
 			{
+				//if player's traced gun isn't the one player traced in last frame
 				if (TracedGunLastFrame != TraceHitGun)
 				{
+					//hide untraced gun's description
 					TracedGunLastFrame->GetPickUpWidget()->SetVisibility(false);
 				}
 			}
 
-			//store last seen gun
+			//Store traced gun
 			TracedGunLastFrame = TraceHitGun;
-		}
-		if (bsuccess)
-		{
 		}
 
 	}
+	//Hide last traced gun's description if we no longer trace anything anymore
 	else if (TracedGunLastFrame)
 	{
 		TracedGunLastFrame->GetPickUpWidget()->SetVisibility(false);
 	}
-	//return HitActor;
 }
+
 // Called to bind functionality to input
 void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
@@ -114,11 +104,8 @@ void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	PlayerInputComponent->BindAxis(TEXT("LookRight"), this, &APawn::AddControllerYawInput);
 	PlayerInputComponent->BindAxis(TEXT("MoveForward"), this, &AShooterCharacter::MoveForward);
 	PlayerInputComponent->BindAxis(TEXT("MoveRight"), this, &AShooterCharacter::MoveRight);
-
 	PlayerInputComponent->BindAction(TEXT("Jump"), EInputEvent::IE_Pressed, this, &ACharacter::Jump);
-
 	PlayerInputComponent->BindAction(TEXT("EquipGun"), EInputEvent::IE_Pressed, this, &AShooterCharacter::SelectButtonPressed);
-
 	PlayerInputComponent->BindAction(TEXT("Shoot"), EInputEvent::IE_Pressed, this, &AShooterCharacter::Shoot);
 }
 
@@ -157,13 +144,14 @@ AGun_Default* AShooterCharacter::SpawnDefaultGun()
 
 float AShooterCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const &DamageEvent, class AController *EventInstigator, AActor *DamageCauser) 
 {
+	//Apply damage to a character
 	float DamageToApply = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 	DamageToApply = FMath::Min(Health, DamageToApply);
 	Health -= DamageToApply;
+
 	if (IsDead())
 	{
 	  	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-		//get GameMode
 		AShooterDemoGameModeBase *GameMode = GetWorld()->GetAuthGameMode<AShooterDemoGameModeBase>();
 		if (GameMode)
 		{
@@ -183,8 +171,7 @@ void AShooterCharacter::EquipGun(AGun_Default *GunToEquip)
 {
 	if (GunToEquip)
 	{
-
-
+		//Attach gun to the player
 		const USkeletalMeshSocket *RightHandSocket = GetMesh()->GetSocketByName(FName("RightHandSocket"));
 		if (RightHandSocket)
 		{
